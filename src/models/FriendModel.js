@@ -3,7 +3,6 @@ import styled from "@emotion/styled"
 import {Albums} from "../resources/Albums"
 
 function FriendModel(el) {
-    console.log(Albums);
     const songFound = Albums[0].songs.find(element => element.id === el.songPlaying);
     return (
         <FriendContainer>

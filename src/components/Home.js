@@ -5,36 +5,44 @@ import spotifyLogo from "../images/spotifyLogo.png"
 import { Link } from "react-router-dom";
 import { Albums } from "../resources/Albums";
 
-function Home() {
+function Home({openSignInModal}) {
     return (
-        <HomeContainer>
-            <HomeBanner>
-                <Banner src={banner} />
-            </HomeBanner>
-            <h1>¡Buenas noches!</h1>
-            <PlayListWrapper>
-                {Albums.map((el => {
-                    return <PlayListCard to={`/lista/${el.id}`}>
-                        <PlayListImg src={spotifyLogo} />
-                        <PlayListDescr>{el.name}</PlayListDescr>
-                    </PlayListCard>
-                }))}
-            </PlayListWrapper>
-        </HomeContainer>
-
+        <>
+            <HomeContainer>
+                <span onClick={openSignInModal}>Iniciar Sesión</span>
+                <HomeBanner>
+                    <Banner src={banner} />
+                </HomeBanner>
+                <h1>¡Buenas noches!</h1>
+                <PlayListWrapper>
+                    {Albums.map((el => {
+                        return <PlayListCard to={`/lista/${el.id}`}>
+                            <PlayListImg src={spotifyLogo} />
+                            <PlayListDescr>{el.name}</PlayListDescr>
+                        </PlayListCard>
+                    }))}
+                </PlayListWrapper>
+            </HomeContainer>
+        </>
     )
 }
 
 export default Home;
 
 
-const HomeContainer = styled.div`
+const HomeContainer = styled.div `
     display: flex;
     flex-direction: column;
     justify-content: center;
     color: white;
     padding: 24px;
-`
+    & > span {
+        cursor: pointer;
+    }
+    & > span:hover {
+        text-decoration: underline;
+    }
+` 
 
 const HomeBanner = styled.div`
     display: flex;

@@ -8,18 +8,39 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Home from "./components/Home";
 import SongList from "./components/SongList";
 import { Albums } from "./resources/Albums";
+import SignUp from "./components/SignUp";
+import { FirebaseContext } from './components/Firebase';
+import SignIn from "./components/SignIn";
 
 
 function App() {
 
   const [songId, changeSong] = useState(0);
+  const [signUp, handleSignUp] = useState(false)
+  const [signIn, handleSignIn] = useState(false)
 
   function playSong(id) {
     changeSong(id)
   }
 
+  function openSignUpModal() {
+    handleSignIn(false)
+    handleSignUp(!signUp)
+  }
+
+  function openSignInModal() {
+    handleSignUp(false)
+    handleSignIn(!signIn)
+  }
+
+  function closeModal() {
+    handleSignUp(false)
+    handleSignIn(false)
+  }
+
 
   const findAlbum = (id) => Albums.find(element => element.id === id);
+  const checkModal = signUp || signIn ? "blur(5px)" : "";
 
   return (
     <>
@@ -42,18 +63,40 @@ function App() {
                 }`
         }
       />
+      <FirebaseContext.Consumer>
+        {
+          firebase => {
+            return (
+              signIn ?
+                <SignIn
+                  show={signIn}
+                  firebase={firebase}
+                  openSignUpModal={openSignUpModal}
+                  closeModal={closeModal}
+                />
+                :
+                <SignUp
+                  show={signUp}
+                  firebase={firebase}
+                  openSignInModal={openSignInModal}
+                  closeModal={closeModal}
+                />)
+          }
+        }
+      </FirebaseContext.Consumer>
 
-      <MainContent>
+      <MainContent checkModal={checkModal}>
         <BrowserRouter>
           <Menu />
           <Switch>
             <ContentWrapper>
               <Route exact path="/" component={Home}>
-                <Home />
+                <Home
+                  openSignInModal={openSignInModal} />
               </Route>
               <Route exact path="/lista/:albumId" render={(routeProps) => (
                 <SongList
-                  album={{ ...findAlbum(parseInt(routeProps.match.params.albumId))}}
+                  album={{ ...findAlbum(parseInt(routeProps.match.params.albumId)) }}
                   playSong={playSong}
                 />
               )}>
@@ -74,10 +117,12 @@ function App() {
 export default App;
 
 const MainContent = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100vh;
+  display: flex;
+  flexDirection: row;
+  width: 100%;
+  height: 100vh;
+  filter: ${props => props.checkModal ? `blur(2px)` : ``};
+  pointer-events: ${props => props.checkModal ? `none` : `all`};
 `
 
 const ContentWrapper = styled.div`

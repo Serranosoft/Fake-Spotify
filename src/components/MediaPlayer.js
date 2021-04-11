@@ -4,7 +4,6 @@ import ReactAudioPlayer from 'react-audio-player';
 import {Albums} from "../resources/Albums"
 
 function MediaPlayer(props) {
-    console.log(Albums);
 
     const songFound = Albums[0].songs.find(element => element.id === props.songId);
 
