@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
+import { FirebaseContext } from './Firebase';
 
-function SignUp({ show, firebase, openSignInModal, closeModal }) {
+function SignUp({ show, openSignInModal, closeModal }) {
     const showHideClassName = show ? "block" : "none";
-    
+
     const initialState = {
         mailInput: "",
         passwdInput: ""
     }
 
     const [inputValues, setInputValues] = useState(initialState)
+    const { register } = useContext(FirebaseContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -18,9 +20,7 @@ function SignUp({ show, firebase, openSignInModal, closeModal }) {
     }
 
     const onSubmit = event => {
-
-        firebase
-            .doCreateUserWithEmailAndPassword(inputValues.mailInput, inputValues.passwdInput)
+        register(inputValues.mailInput, inputValues.passwdInput)
             .then(() => {
                 setInputValues(inputValues)
                 closeModal();
@@ -78,8 +78,6 @@ function SignUp({ show, firebase, openSignInModal, closeModal }) {
             <Button>Continuar con Apple</Button>
 
         </ModalContainer>
-
-
     )
 }
 
@@ -124,8 +122,6 @@ const Input = styled.input`
     color: white;
     border: 0;
 `
-
-
 
 const Button = styled.button`
     width: 100%;

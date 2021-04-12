@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Global, css } from '@emotion/react'
 import styled from "@emotion/styled"
 import Menu from "./components/Menu";
@@ -18,6 +18,8 @@ function App() {
   const [songId, changeSong] = useState(0);
   const [signUp, handleSignUp] = useState(false)
   const [signIn, handleSignIn] = useState(false)
+  const [authUserRef, handleAuthUser] = useState("")
+  const { getUserData } = useContext(FirebaseContext)
 
   function playSong(id) {
     changeSong(id)
@@ -38,6 +40,9 @@ function App() {
     handleSignIn(false)
   }
 
+  useEffect(() => {
+    getUserData(handleAuthUser);
+  }, [signIn])
 
   const findAlbum = (id) => Albums.find(element => element.id === id);
   const checkModal = signUp || signIn ? "blur(5px)" : "";
@@ -63,28 +68,19 @@ function App() {
                 }`
         }
       />
-      <FirebaseContext.Consumer>
-        {
-          firebase => {
-            return (
-              signIn ?
-                <SignIn
-                  show={signIn}
-                  firebase={firebase}
-                  openSignUpModal={openSignUpModal}
-                  closeModal={closeModal}
-                />
-                :
-                <SignUp
-                  show={signUp}
-                  firebase={firebase}
-                  openSignInModal={openSignInModal}
-                  closeModal={closeModal}
-                />)
-          }
-        }
-      </FirebaseContext.Consumer>
-
+      {signIn ?
+        <SignIn
+          show={signIn}
+          openSignUpModal={openSignUpModal}
+          closeModal={closeModal}
+        />
+        :
+        <SignUp
+          show={signUp}
+          openSignInModal={openSignInModal}
+          closeModal={closeModal}
+        />
+      }
       <MainContent checkModal={checkModal}>
         <BrowserRouter>
           <Menu />
@@ -92,7 +88,9 @@ function App() {
             <ContentWrapper>
               <Route exact path="/" component={Home}>
                 <Home
-                  openSignInModal={openSignInModal} />
+                  authUser={authUserRef}
+                  openSignInModal={openSignInModal}
+                />
               </Route>
               <Route exact path="/lista/:albumId" render={(routeProps) => (
                 <SongList
@@ -103,10 +101,8 @@ function App() {
               </Route>
             </ContentWrapper>
           </Switch>
-
           <FriendsList playSong={playSong} />
           <MediaPlayer songId={songId} />
-
         </BrowserRouter>
       </MainContent>
 

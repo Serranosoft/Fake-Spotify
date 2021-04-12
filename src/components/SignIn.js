@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
+import { FirebaseContext } from './Firebase';
 
-function SignIn({ show, firebase, openSignUpModal, closeModal }) {
-    const showHideClassName = show ? "block" : "none";
+function SignIn({ show, openSignUpModal, closeModal }) {
 
     const initialState = {
         mailInput: "",
         passwdInput: ""
     }
+    const showHideClassName = show ? "block" : "none";
 
     const [inputValues, setInputValues] = useState(initialState)
+    const { login } = useContext(FirebaseContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -18,18 +20,14 @@ function SignIn({ show, firebase, openSignUpModal, closeModal }) {
     }
 
     const onSubmit = event => {
-
-        firebase
-            .doSignInWithEmailAndPassword(inputValues.mailInput, inputValues.passwdInput)
+        login(inputValues.mailInput, inputValues.passwdInput)
             .then(authUser => {
                 setInputValues(inputValues)
                 closeModal();
             })
             .catch(error => {
                 console.log(error);
-
             });
-
         event.preventDefault();
     }
 
@@ -74,11 +72,11 @@ function SignIn({ show, firebase, openSignUpModal, closeModal }) {
             <Button>Registrar-se con Facebook</Button>
             <Button>Registrar-se con Google</Button>
             <Button>Registrar-se con Apple</Button>
-            <InfoText style={{ marginTop: "24px" }} onClick={openSignUpModal}>¿No tienes cuenta? 
-                <span style={{ textDecoration: "underline"}}>REGISTRATE</span>
+            <InfoText style={{ marginTop: "24px" }} onClick={openSignUpModal}>¿No tienes cuenta?
+                <span style={{ textDecoration: "underline" }}>REGISTRATE</span>
             </InfoText>
         </ModalContainer>
-  
+
     )
 }
 

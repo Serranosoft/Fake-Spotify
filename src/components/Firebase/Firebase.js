@@ -20,15 +20,15 @@ class Firebase {
     // *** Auth API ***
 
     // Create account
-    doCreateUserWithEmailAndPassword = (email, password) =>
+    register = (email, password) =>
         this.auth.createUserWithEmailAndPassword(email, password);
 
     // Sign in
-    doSignInWithEmailAndPassword = (email, password) =>
+    login = (email, password) =>
         this.auth.signInWithEmailAndPassword(email, password);
 
     // Sign out
-    doSignOut = () => this.auth.signOut();
+    SignOut = () => this.auth.signOut();
 
     // Reset password
     doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
@@ -36,6 +36,13 @@ class Firebase {
     // Update password
     doPasswordUpdate = password =>
         this.auth.currentUser.updatePassword(password);
+
+    // Get authenticated user data
+    getUserData = (handleUser) => {
+        this.auth.onAuthStateChanged(authUser => {
+            handleUser(authUser)
+        })
+    }
 }
 
 export default Firebase;

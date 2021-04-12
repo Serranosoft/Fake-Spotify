@@ -1,22 +1,32 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "@emotion/styled"
 import banner from "../images/banner.png"
 import spotifyLogo from "../images/spotifyLogo.png"
 import { Link } from "react-router-dom";
 import { Albums } from "../resources/Albums";
+import { FirebaseContext } from './Firebase';
 
-function Home({openSignInModal}) {
+function Home({ openSignInModal, authUser }) {
+
+    const { SignOut } = useContext(FirebaseContext);
+
     return (
         <>
             <HomeContainer>
-                <span onClick={openSignInModal}>Iniciar Sesión</span>
+                <DropdownMenu>
+                    <span>{authUser ? authUser.email: "Iniciar Sesión"} &raquo;</span>
+                    <DropdownContent>
+                        <DropdownOption onClick={openSignInModal}>Iniciar Sesión</DropdownOption>
+                        <DropdownOption onClick={SignOut}>Cerrar Sesión</DropdownOption>
+                    </DropdownContent>
+                </DropdownMenu>
                 <HomeBanner>
                     <Banner src={banner} />
                 </HomeBanner>
-                <h1>¡Buenas noches!</h1>
+                <h1 style={{fontSize: "24px"}}>{authUser ? `¡Hola, ${authUser.email}!`:`¡Hola, bivenenido a Fake Spotify!`}</h1>
                 <PlayListWrapper>
                     {Albums.map((el => {
-                        return <PlayListCard to={`/lista/${el.id}`}>
+                        return <PlayListCard key={el.id} to={`/lista/${el.id}`}>
                             <PlayListImg src={spotifyLogo} />
                             <PlayListDescr>{el.name}</PlayListDescr>
                         </PlayListCard>
@@ -30,19 +40,42 @@ function Home({openSignInModal}) {
 export default Home;
 
 
-const HomeContainer = styled.div `
+const HomeContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     color: white;
     padding: 24px;
-    & > span {
-        cursor: pointer;
+`
+
+const DropdownMenu = styled.div`
+    display: inline-block;
+    align-self: flex-end;
+    padding: 8px 16px;
+    border-radius: 15px;
+    border: 1px solid gray;
+    cursor: pointer;
+    &:hover > div {
+        display: block;
     }
+`
+
+const DropdownContent = styled.div`
+    display: none;
+    position: absolute;
+    margin: 8px 0;
+    background-color: #242424;
+    box-shadow: 0px 8px 16px 0px black;
+    z-index: 1;
     & > span:hover {
-        text-decoration: underline;
+        background-color: #333333;
     }
-` 
+`
+
+const DropdownOption = styled.span`
+    padding: 16px 16px;
+    display: block;
+`
 
 const HomeBanner = styled.div`
     display: flex;
@@ -78,14 +111,13 @@ const PlayListCard = styled(Link)`
 `
 
 const PlayListImg = styled.img`
-    width: 100%;
+    width: 40%;
     height: 100%;
-    flex: 1 6 auto;
 `
 
 const PlayListDescr = styled.p`
-    flex: 1 0 6;
-    margin-left: 16px;
+    width: 60%;
+    padding: 8px;
     color: white;
     font-weight: bold;
 `
