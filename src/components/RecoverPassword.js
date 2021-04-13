@@ -3,21 +3,17 @@ import styled from "@emotion/styled";
 import banner from "../images/banner.png"
 import { FirebaseContext } from './Firebase';
 
-function SignIn({ show, openSignUpModal, closeModal, openResetPasswordModal }) {
+function RecoverPassword({show, closeModal}) {
 
     const initialState = {
-        mailInput: "",
-        passwdInput: ""
+        passwdInput: "",
+        passwdMatch: ""
     }
-    
-    const [inputValues, setInputValues] = useState(initialState)
-    const [recoverPasswd, handleRecoverPasswd] = useState(false);
 
     const showHideClassName = show ? "block" : "none";
-    const filter = recoverPasswd ? "blur(5px)" : "";
 
-
-    const { login } = useContext(FirebaseContext);
+    const [inputValues, setInputValues] = useState(initialState)
+    const { updatePassword } = useContext(FirebaseContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -25,49 +21,45 @@ function SignIn({ show, openSignUpModal, closeModal, openResetPasswordModal }) {
     }
 
     const onSubmit = event => {
-        login(inputValues.mailInput, inputValues.passwdInput)
-            .then(authUser => {
-                setInputValues(inputValues)
-                closeModal();
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        if (inputValues.passwdInput === inputValues.passwdMatch) {
+            updatePassword(inputValues.passwdInput)
+                .then(authUser => {
+                    setInputValues(inputValues)
+                    closeModal();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
         event.preventDefault();
     }
 
-    const handleRecovery = () => {
-        handleRecoverPasswd(!recoverPasswd);
-        openResetPasswordModal();
-    }
 
     return (
-        <ModalContainer showHide={showHideClassName} filter={filter}>
+        <ModalContainer showHide={showHideClassName}>
             <CloseModal onClick={closeModal}>&times;</CloseModal>
             <HomeBanner>
                 <Banner src={banner} />
             </HomeBanner>
-            <h1 style={{ marginBottom: "16px", fontSize: "28px" }}>Para continuar, inicia sesión.</h1>
+            <h1 style={{ marginBottom: "16px", fontSize: "28px" }}>Actualiza tu contraseña.</h1>
 
             <form>
-                <Input
-                    type="text"
-                    value={inputValues.mailInput}
-                    name="mailInput"
-                    onChange={handleChange}
-                    placeholder="email"
-                />
-
                 <Input
                     type="password"
                     value={inputValues.passwdInput}
                     name="passwdInput"
                     onChange={handleChange}
-                    placeholder="contraseña"
+                    placeholder="contraseña nueva"
+                />
+
+                <Input
+                    type="password"
+                    value={inputValues.passwdMatch}
+                    name="passwdMatch"
+                    onChange={handleChange}
+                    placeholder="repite la contraseña nueva"
                 />
             </form>
-
-            <InfoText onClick={handleRecovery} style={{ textAlign: "left" }}>Restablecer contraseña</InfoText>
 
             <Button onClick={onSubmit} style={{
                 backgroundColor: "white",
@@ -75,22 +67,13 @@ function SignIn({ show, openSignUpModal, closeModal, openResetPasswordModal }) {
                 fontSize: "16px",
                 letterSpacing: "1.1px",
                 marginBottom: "16px"
-            }}>INICIAR SESIÓN</Button>
+            }}>CAMBIAR CONTRASEÑA</Button>
 
-            <hr />
-
-            <Button>Registrar-se con Facebook</Button>
-            <Button>Registrar-se con Google</Button>
-            <Button>Registrar-se con Apple</Button>
-            <InfoText style={{ marginTop: "24px" }} onClick={openSignUpModal}>¿No tienes cuenta?
-                <span style={{ textDecoration: "underline" }}>REGISTRATE</span>
-            </InfoText>
         </ModalContainer>
-
     )
 }
 
-export default SignIn;
+export default RecoverPassword
 
 const ModalContainer = styled.div({
     width: "450px",
@@ -104,7 +87,7 @@ const ModalContainer = styled.div({
     backgroundColor: "#121212",
     color: "white",
     textAlign: "center"
-}, props => ({ display: `${props.showHide}`, filter: `${props.filter}` }))
+}, props => ({ display: `${props.showHide}` }))
 
 const CloseModal = styled.span`
     font-size: 28px;
@@ -130,16 +113,6 @@ const Input = styled.input`
     background-color: #212121;
     color: white;
     border: 0;
-`
-
-const InfoText = styled.p`
-    font-size: 13px;
-    color: gray;
-    margin: 16px 0;
-    cursor: pointer;
-    &:hover {
-        color: white;
-    }
 `
 
 const Button = styled.button`

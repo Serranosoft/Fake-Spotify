@@ -31,10 +31,10 @@ class Firebase {
     SignOut = () => this.auth.signOut();
 
     // Reset password
-    doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
+    resetPassword = email => this.auth.sendPasswordResetEmail(email);
 
     // Update password
-    doPasswordUpdate = password =>
+    updatePassword = password =>
         this.auth.currentUser.updatePassword(password);
 
     // Get authenticated user data

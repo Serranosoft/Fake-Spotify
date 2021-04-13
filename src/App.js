@@ -11,13 +11,17 @@ import { Albums } from "./resources/Albums";
 import SignUp from "./components/SignUp";
 import { FirebaseContext } from './components/Firebase';
 import SignIn from "./components/SignIn";
-
+import Profile from "./components/Profile";
+import RecoverPassword from "./components/RecoverPassword";
+import ResetPassword from "./components/ResetPassword"
 
 function App() {
 
   const [songId, changeSong] = useState(0);
   const [signUp, handleSignUp] = useState(false)
   const [signIn, handleSignIn] = useState(false)
+  const [recoverPassword, handleRecoverPassword] = useState(false)
+  const [resetPassword, handleResetPassword] = useState(false)
   const [authUserRef, handleAuthUser] = useState("")
   const { getUserData } = useContext(FirebaseContext)
 
@@ -35,9 +39,19 @@ function App() {
     handleSignIn(!signIn)
   }
 
+  function openRecoverPasswordModal() {
+    handleRecoverPassword(!recoverPassword)
+  }
+
+  function openResetPasswordModal() {
+    handleResetPassword(!resetPassword)
+  }
+
   function closeModal() {
     handleSignUp(false)
     handleSignIn(false)
+    handleRecoverPassword(false)
+    handleResetPassword(false)
   }
 
   useEffect(() => {
@@ -45,7 +59,7 @@ function App() {
   }, [signIn])
 
   const findAlbum = (id) => Albums.find(element => element.id === id);
-  const checkModal = signUp || signIn ? "blur(5px)" : "";
+  const checkModal = signUp || signIn || recoverPassword ? "blur(5px)" : "";
 
   return (
     <>
@@ -72,6 +86,7 @@ function App() {
         <SignIn
           show={signIn}
           openSignUpModal={openSignUpModal}
+          openResetPasswordModal={openResetPasswordModal}
           closeModal={closeModal}
         />
         :
@@ -81,6 +96,19 @@ function App() {
           closeModal={closeModal}
         />
       }
+
+      {recoverPassword &&
+        <RecoverPassword
+          show={recoverPassword}
+          closeModal={closeModal} />
+      }
+
+      {resetPassword &&
+        <ResetPassword
+          show={resetPassword}
+          closeModal={closeModal} />
+      }
+
       <MainContent checkModal={checkModal}>
         <BrowserRouter>
           <Menu />
@@ -91,6 +119,22 @@ function App() {
                   authUser={authUserRef}
                   openSignInModal={openSignInModal}
                 />
+              </Route>
+              <Route exact path="/profile" component={Profile}>
+                {authUserRef ?
+                  <Profile
+                    authUser={authUserRef}
+                    openSignInModal={openSignInModal}
+                    openRecoverPasswordModal={openRecoverPasswordModal}
+                  />
+                  :
+                  <SignIn
+                    show={true}
+                    openSignUpModal={openSignUpModal}
+                    openResetPasswordModal={openResetPasswordModal}
+                    closeModal={closeModal}
+                  />
+                }
               </Route>
               <Route exact path="/lista/:albumId" render={(routeProps) => (
                 <SongList
