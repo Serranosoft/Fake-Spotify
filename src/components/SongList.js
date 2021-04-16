@@ -2,18 +2,18 @@ import React from "react";
 import styled from "@emotion/styled"
 import SongModel from "../models/SongModel"
 
-function SongList(props) {
-    const songsQty = props.album.songs.length;
+function SongList({album, playSong, handleFavorite}) {
+    const songsQty = album.songs.length;
 
     return (
         <>
             <SongListHeader>
-                <h1>{props.album.name}</h1>
+                <h1>{album.name}</h1>
                 <span>Este albúm tiene {songsQty} canciones</span>
             </SongListHeader>
             <SongListContainer>
-                {props.album.songs.map((el => {
-                    return <SongModel key={el.id} playSong={props.playSong} {...el} />
+                {album.songs.map((el => {
+                    return <SongModel key={el.id} playSong={playSong} handleFavorite={handleFavorite} {...el} />
                 }))}
 
             </SongListContainer>

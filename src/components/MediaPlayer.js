@@ -1,23 +1,46 @@
 import React from "react";
 import styled from "@emotion/styled"
 import ReactAudioPlayer from 'react-audio-player';
-import {Albums} from "../resources/Albums"
+import { Albums } from "../resources/Albums"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons'
 
-function MediaPlayer(props) {
+function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
 
-    const songFound = Albums[0].songs.find(element => element.id === props.songId);
+    const songFound = Albums[0].songs.find(element => element.id === songId);
+
+    let isFavorite = false;
+    favoriteSongs.forEach((el => {
+        if(el.songId === songFound.id) isFavorite = true
+    }))
 
     return (
         <PlayerContainer>
             <SongData>
-                <h2>{songFound.author}</h2>
+                <ActionWrapper>
+                    <h2>{songFound.author}</h2>
+                    {isFavorite ? 
+                    <FontAwesomeIcon
+                        icon={faHeartSolid}
+                        size="1x"
+                        onClick={() => handleFavorite(songId)}
+                    />
+                    :
+                    <FontAwesomeIcon
+                        icon={faHeartRegular}
+                        size="1x"
+                        onClick={() => handleFavorite(songId)}
+                    />
+                }
+                </ActionWrapper>
                 <p>{songFound.title}</p>
             </SongData>
             <ReactAudioPlayer
                 src={songFound.song}
                 controls
                 /* autoPlay */
-                style={{width: "40%"}}
+                style={{ width: "40%" }}
             />
             <SongData>
                 <h2>Creado por</h2>
@@ -47,10 +70,17 @@ const SongData = styled.div`
     display: flex;
     flex-direction: column;
     color: white;
-    & > h2 {
-        font-size: 18px;
-    }
+    
     & > p {
         font-size: 12px;
+    }
+`
+
+const ActionWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    & > h2 {
+        font-size: 18px;
+        margin-right: 16px;
     }
 `

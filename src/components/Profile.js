@@ -1,21 +1,49 @@
-import React from "react"
+import React, { useContext, useState } from "react"
 import styled from "@emotion/styled"
 import DropdownMenu from "./DropdownMenu";
+import SignIn from "./SignIn"
+import ResetPassword from "./ResetPassword";
+import { FirebaseContext } from "./Firebase";
 
-function Profile({ authUser, openSignInModal, openRecoverPasswordModal }) {
+function Profile({ authUser, openSignInModal, handleAuthUser, userName }) {
 
+    const [resetPasswdActive, handleResetPasswdModal] = useState(false)
+    
+    function openResetPasswdModal() {
+        handleResetPasswdModal(true)
+    }
+
+    function closeModal() {
+        handleResetPasswdModal(false)
+    }
 
     return (
-        <HomeContainer>
-            <DropdownMenu openSignInModal={openSignInModal} authUser={authUser} />
-            <ProfileInfoWrapper>
-                <ProfileImg />
-                <ProfileName>{authUser.email}</ProfileName>
-            </ProfileInfoWrapper>
-            <ProfileOptionsWrapper>
-                <ProfileOption onClick={openRecoverPasswordModal}>Actualizar contraseña</ProfileOption>
-            </ProfileOptionsWrapper>
-        </HomeContainer>
+        <>
+            {resetPasswdActive &&
+                <ResetPassword
+                    show={true}
+                    closeModal={closeModal}
+                />
+            }
+
+            {authUser ?
+                <HomeContainer>
+                    <DropdownMenu openSignInModal={openSignInModal} authUser={authUser} />
+                    <ProfileInfoWrapper>
+                        <ProfileImg />
+                        <ProfileName>{userName}</ProfileName>
+                    </ProfileInfoWrapper>
+                    <ProfileOptionsWrapper>
+                        <ProfileOption onClick={openResetPasswdModal}>Actualizar contraseña</ProfileOption>
+                    </ProfileOptionsWrapper>
+                </HomeContainer>
+                :
+                <SignIn
+                    closeModal={closeModal}
+                    handleAuthUser={handleAuthUser}
+                />
+            }
+        </>
     )
 }
 
@@ -34,7 +62,7 @@ const ProfileInfoWrapper = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
     margin: 16px 0;    
 `
 
@@ -47,10 +75,10 @@ const ProfileImg = styled.img`
 
 const ProfileName = styled.h1`
     word-break: break-all;
-    width: 70%;
     color: white;
     font-weight: bold;
     font-size: 48px;
+    text-align: center;
 `
 
 const ProfileOptionsWrapper = styled.div`

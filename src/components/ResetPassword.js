@@ -2,17 +2,19 @@ import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
 import { FirebaseContext } from './Firebase';
+import { useHistory } from 'react-router-dom';
 
-function ResetPassword({ show, closeModal }) {
-
+function ResetPassword({show, closeModal}) {
     const initialState = {
-        emailInput: ""
+        passwdInput: "",
+        passwdMatch: ""
     }
 
     const showHideClassName = show ? "block" : "none";
 
     const [inputValues, setInputValues] = useState(initialState)
-    const { resetPassword } = useContext(FirebaseContext);
+    const { updatePassword, SignOut } = useContext(FirebaseContext);
+    const history = useHistory();
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -20,16 +22,18 @@ function ResetPassword({ show, closeModal }) {
     }
 
     const onSubmit = event => {
-
-        resetPassword(inputValues.emailInput)
-            .then(authUser => {
-                setInputValues(inputValues)
-                closeModal();
-            })
-            .catch(error => {
-                console.log(error);
-            });
-
+        if (inputValues.passwdInput === inputValues.passwdMatch) {
+            updatePassword(inputValues.passwdInput)
+                .then(authUser => {
+                    setInputValues(inputValues)
+                    history.push("/")
+                    SignOut();
+                    closeModal();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
         event.preventDefault();
     }
 
@@ -40,15 +44,23 @@ function ResetPassword({ show, closeModal }) {
             <HomeBanner>
                 <Banner src={banner} />
             </HomeBanner>
-            <h1 style={{ marginBottom: "16px", fontSize: "28px" }}>Recupera tu contraseña.</h1>
+            <h1 style={{ marginBottom: "16px", fontSize: "28px" }}>Actualiza tu contraseña.</h1>
 
             <form>
                 <Input
-                    type="email"
-                    value={inputValues.emailInput}
-                    name="emailInput"
+                    type="password"
+                    value={inputValues.passwdInput}
+                    name="passwdInput"
                     onChange={handleChange}
-                    placeholder="email"
+                    placeholder="contraseña nueva"
+                />
+
+                <Input
+                    type="password"
+                    value={inputValues.passwdMatch}
+                    name="passwdMatch"
+                    onChange={handleChange}
+                    placeholder="repite la contraseña nueva"
                 />
             </form>
 
@@ -58,7 +70,7 @@ function ResetPassword({ show, closeModal }) {
                 fontSize: "16px",
                 letterSpacing: "1.1px",
                 marginBottom: "16px"
-            }}>RECUPERAR CONTRASEÑA</Button>
+            }}>CAMBIAR CONTRASEÑA</Button>
 
         </ModalContainer>
     )

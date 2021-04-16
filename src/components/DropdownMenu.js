@@ -4,7 +4,7 @@ import { FirebaseContext } from './Firebase';
 import { Link } from "react-router-dom";
 
 
-function DropdownMenu({ openSignInModal, authUser }) {
+function DropdownMenu({ authUser, openSignInModal }) {
 
     const { SignOut } = useContext(FirebaseContext);
 

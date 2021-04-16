@@ -2,16 +2,22 @@ import React from "react";
 import styled from "@emotion/styled"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlayCircle } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons'
 
 function SongModel(el) {
 
     return (
         <SongContainer>
-            <FontAwesomeIcon 
-                icon={faPlayCircle} 
+            <FontAwesomeIcon
+                icon={faPlayCircle}
                 size="2x"
-                style={{cursor: "pointer"}} 
-                onClick={() => {el.playSong(el.id)}}/>
+                style={{ cursor: "pointer" }}
+                onClick={() => { el.playSong(el.id) }} />
+            <FontAwesomeIcon
+                icon={faHeartRegular}
+                size="1x"
+            />
             <SongData>
                 <h2>{el.title}</h2>
                 <span>{el.author}</span>
@@ -29,6 +35,7 @@ const SongContainer = styled.header`
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-evenly;
     width: 100%;
     background-color: transparent;
     padding: 8px;
@@ -44,7 +51,6 @@ const SongData = styled.div`
     flex-direction: column;
     color: white;
     width: 50%;
-    margin: 0 16px;
     & > h2 {
         font-size: 15px;
     }

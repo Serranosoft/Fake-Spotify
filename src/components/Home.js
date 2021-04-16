@@ -1,21 +1,22 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "@emotion/styled"
 import banner from "../images/banner.png"
 import spotifyLogo from "../images/spotifyLogo.png"
 import { Link } from "react-router-dom";
 import { Albums } from "../resources/Albums";
 import DropdownMenu from "./DropdownMenu";
+import { FirebaseContext } from "./Firebase";
 
-function Home({ authUser, openSignInModal }) {
+function Home({ authUser, openSignInModal, userName }) {
 
     return (
         <>
             <HomeContainer>
-                <DropdownMenu openSignInModal={openSignInModal} authUser={authUser}/>
+                <DropdownMenu authUser={authUser} openSignInModal={openSignInModal}/>
                 <HomeBanner>
                     <Banner src={banner} />
                 </HomeBanner>
-                <h1 style={{ fontSize: "24px" }}>{authUser ? `¡Hola, ${authUser.email}!` : `¡Hola, bienvenido a Fake Spotify!`}</h1>
+                <h1 style={{ fontSize: "24px" }}>{authUser ? `¡Hola, ${userName}!` : `¡Hola, bienvenido a Fake Spotify!`}</h1>
                 <PlayListWrapper>
                     {Albums.map((el => {
                         return <PlayListCard key={el.id} to={`/lista/${el.id}`}>

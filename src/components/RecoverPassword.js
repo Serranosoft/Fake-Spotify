@@ -3,17 +3,14 @@ import styled from "@emotion/styled";
 import banner from "../images/banner.png"
 import { FirebaseContext } from './Firebase';
 
-function RecoverPassword({show, closeModal}) {
+function RecoverPassword({ closeModal }) {
 
     const initialState = {
-        passwdInput: "",
-        passwdMatch: ""
+        emailInput: ""
     }
 
-    const showHideClassName = show ? "block" : "none";
-
     const [inputValues, setInputValues] = useState(initialState)
-    const { updatePassword } = useContext(FirebaseContext);
+    const { resetPassword } = useContext(FirebaseContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -21,43 +18,35 @@ function RecoverPassword({show, closeModal}) {
     }
 
     const onSubmit = event => {
-        if (inputValues.passwdInput === inputValues.passwdMatch) {
-            updatePassword(inputValues.passwdInput)
-                .then(authUser => {
-                    setInputValues(inputValues)
-                    closeModal();
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        }
+
+        resetPassword(inputValues.emailInput)
+            .then(authUser => {
+                setInputValues(inputValues)
+                closeModal();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
         event.preventDefault();
     }
 
 
     return (
-        <ModalContainer showHide={showHideClassName}>
+        <ModalContainer>
             <CloseModal onClick={closeModal}>&times;</CloseModal>
             <HomeBanner>
                 <Banner src={banner} />
             </HomeBanner>
-            <h1 style={{ marginBottom: "16px", fontSize: "28px" }}>Actualiza tu contraseña.</h1>
+            <h1 style={{ marginBottom: "16px", fontSize: "28px" }}>Recupera tu contraseña.</h1>
 
             <form>
                 <Input
-                    type="password"
-                    value={inputValues.passwdInput}
-                    name="passwdInput"
+                    type="email"
+                    value={inputValues.emailInput}
+                    name="emailInput"
                     onChange={handleChange}
-                    placeholder="contraseña nueva"
-                />
-
-                <Input
-                    type="password"
-                    value={inputValues.passwdMatch}
-                    name="passwdMatch"
-                    onChange={handleChange}
-                    placeholder="repite la contraseña nueva"
+                    placeholder="email"
                 />
             </form>
 
@@ -67,7 +56,7 @@ function RecoverPassword({show, closeModal}) {
                 fontSize: "16px",
                 letterSpacing: "1.1px",
                 marginBottom: "16px"
-            }}>CAMBIAR CONTRASEÑA</Button>
+            }}>RECUPERAR CONTRASEÑA</Button>
 
         </ModalContainer>
     )
@@ -82,12 +71,12 @@ const ModalContainer = styled.div({
     left: "50%",
     transform: "translate(-50%, -50%)",
     padding: "24px 52px",
-    zIndex: "10",
+    zIndex: "11",
     borderRadius: "15px",
     backgroundColor: "#121212",
     color: "white",
     textAlign: "center"
-}, props => ({ display: `${props.showHide}` }))
+})
 
 const CloseModal = styled.span`
     font-size: 28px;

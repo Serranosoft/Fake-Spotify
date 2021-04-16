@@ -3,30 +3,44 @@ import styled from "@emotion/styled";
 import banner from "../images/banner.png"
 import { FirebaseContext } from './Firebase';
 
-function SignUp({ show, openSignInModal, closeModal }) {
-    const showHideClassName = show ? "block" : "none";
+function SignUp({ closeModal, handleAuthUser, handleSignUpModal }) {
 
     const initialState = {
+        userNameInput: "",
         mailInput: "",
         passwdInput: ""
     }
 
     const [inputValues, setInputValues] = useState(initialState)
-    const { register } = useContext(FirebaseContext);
+    const { register, createUser } = useContext(FirebaseContext);
+    const { userNameInput, mailInput, passwdInput } = inputValues;
 
     const handleChange = (e) => {
         const { name, value } = e.target
         setInputValues({ ...inputValues, [name]: value })
     }
 
+    function openSignInModal() {
+        handleSignUpModal(false)
+    }
+
     const onSubmit = event => {
-        register(inputValues.mailInput, inputValues.passwdInput)
+        let user = {
+            userNameInput,
+            mailInput,
+            "favorite-songs": ""
+        }
+        register(mailInput, passwdInput)
+            .then(authUser => {
+                createUser(authUser.user.uid, user)
+                handleAuthUser(authUser.user)
+            })
             .then(() => {
-                setInputValues(inputValues)
+                setInputValues(initialState)
                 closeModal();
             })
             .catch(error => {
-                console.log(error);
+                console.log({ error });
             });
 
         event.preventDefault();
@@ -34,7 +48,7 @@ function SignUp({ show, openSignInModal, closeModal }) {
 
     return (
 
-        <ModalContainer showHide={showHideClassName}>
+        <ModalContainer>
             <CloseModal onClick={closeModal}>&times;</CloseModal>
             <HomeBanner>
                 <Banner src={banner} />
@@ -44,15 +58,23 @@ function SignUp({ show, openSignInModal, closeModal }) {
             <form>
                 <Input
                     type="text"
-                    value={inputValues.mailInput}
+                    value={userNameInput}
+                    name="userNameInput"
+                    onChange={handleChange}
+                    placeholder="nombre de usuario"
+                />
+
+                <Input
+                    type="email"
+                    value={mailInput}
                     name="mailInput"
                     onChange={handleChange}
                     placeholder="email"
                 />
 
                 <Input
-                    type="text"
-                    value={inputValues.passwdInput}
+                    type="password"
+                    value={passwdInput}
                     name="passwdInput"
                     onChange={handleChange}
                     placeholder="contraseña"
@@ -95,7 +117,7 @@ const ModalContainer = styled.div({
     backgroundColor: "#121212",
     color: "white",
     textAlign: "center"
-}, props => ({ display: `${props.showHide}` }))
+})
 
 const CloseModal = styled.span`
     font-size: 28px;
