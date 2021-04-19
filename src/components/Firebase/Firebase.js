@@ -31,7 +31,13 @@ class Firebase {
         this.auth.signInWithEmailAndPassword(email, password);
 
     // Sign out
-    SignOut = () => this.auth.signOut();
+    SignOut = (handleAuthUser, history) => {
+        this.auth.signOut()
+            .then(() => {
+                handleAuthUser("")
+                history.push("/")
+            })
+    }
 
     // Reset password
     resetPassword = email => this.auth.sendPasswordResetEmail(email);
@@ -109,17 +115,21 @@ class Firebase {
 
     // Add album
     addAlbum = (id, albumName) => {
-        this.getUserRef(id).child("albums").push({
-            "albumName": albumName
-        }).then((response) => {
+        if (albumName != "" && albumName != undefined) {
+            this.getUserRef(id).child("albums").push({
+                "albumName": albumName
+            }).then((response) => {
 
-        }).catch((error) => {
-            console.log(error);
-        })
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
     }
 
     // Get all albums from a user
     getAlbums = (id, handleAlbums) => {
+
+        console.log("GET ALBUMS");
         this.getUserRef(id).child("albums").on("value", snapshot => {
             const snap = snapshot.val();
             const snapValues = Object.keys(snapshot.val()).map(key => ({

@@ -2,12 +2,13 @@ import React, { useContext } from "react";
 import styled from "@emotion/styled"
 import { FirebaseContext } from './Firebase';
 import { Link } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 
 
-function DropdownMenu({ authUser, openSignInModal }) {
+function DropdownMenu({ authUser, openSignInModal, handleAuthUser }) {
 
     const { SignOut } = useContext(FirebaseContext);
-
+    const history = useHistory();
     return (
         <DropdownMenuWrapper>
             <span>{authUser ? authUser.email : "Iniciar Sesión"} &raquo;</span>
@@ -17,7 +18,7 @@ function DropdownMenu({ authUser, openSignInModal }) {
                     <DropdownOption onClick={openSignInModal}>Iniciar Sesión</DropdownOption>
                 }
                 {authUser ?
-                    <DropdownOption onClick={SignOut}>Cerrar Sesión</DropdownOption>
+                    <DropdownOption onClick={() => SignOut(handleAuthUser, history)}>Cerrar Sesión</DropdownOption>
                     :
                     ""
                 }

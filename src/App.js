@@ -14,11 +14,7 @@ import Profile from "./components/Profile";
 import Loading from "./components/Loading";
 import DropdownMenu from "./components/DropdownMenu";
 
-import { useHistory } from 'react-router-dom';
-
 function App() {
-
-  const history = useHistory();
 
   // Estado de la canción global reproduciéndose.
   const [songId, changeSong] = useState(0);
@@ -54,7 +50,6 @@ function App() {
 
   function closeModal() {
     handleSignInModal(false)
-    /* history.push("/") */
   }
 
   // Verifica si una canción ya esta en favoritos o no
@@ -92,6 +87,11 @@ function App() {
       getFavoriteSongs(authUserRef.uid, handleFavorites)
       getAlbums(authUserRef.uid, handleAlbums)
       getUserName(authUserRef.uid, setUserName);
+    } else {
+      // Limpiamos todos los state si el usuario no esta autenticado
+      handleAlbums([])
+      handleFavorites([])
+      setUserName("")
     }
   }, [authUserRef])
 
@@ -163,10 +163,11 @@ function App() {
             <Menu
               authUser={authUserRef}
               albums={albums}
+              openSignInModal={openSignInModal}
             />
             <Switch>
               <ContentWrapper>
-                <DropdownMenu authUser={authUserRef} openSignInModal={openSignInModal} />
+                <DropdownMenu authUser={authUserRef} openSignInModal={openSignInModal} handleAuthUser={handleAuthUser} />
                 <Route exact path="/" component={Home}>
                   <Home
                     authUser={authUserRef}

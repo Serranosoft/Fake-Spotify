@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faSearch, faBook } from '@fortawesome/free-solid-svg-icons'
 import { FirebaseContext } from "./Firebase";
 
-function Menu({ authUser, albums }) {
+function Menu({ authUser, albums, openSignInModal }) {
 
     const [albumName, handleAlbumName] = useState("");
 
@@ -48,7 +48,7 @@ function Menu({ authUser, albums }) {
                         value={albumName}
                         onChange={handleChange}
                         placeholder="Crea tu propio albúm" />
-                    <AddAlbum onClick={() => addAlbum(authUser.uid, albumName)}>+</AddAlbum>
+                    <AddAlbum onClick={() => {authUser != null ? addAlbum(authUser.uid, albumName) : openSignInModal()}}>+</AddAlbum>
                 </AddAlbumWrapper>
 
                 {authUser ?

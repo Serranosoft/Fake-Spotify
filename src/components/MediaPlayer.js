@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useEffect } from "react";
 import styled from "@emotion/styled"
 import ReactAudioPlayer from 'react-audio-player';
 import { Albums } from "../resources/Albums"
@@ -14,8 +14,6 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
     favoriteSongs.forEach((el => {
         if(el.id === songFound.id) isFavorite = true
     }))
-
-    /*  test    */
 
     const player = createRef();
     useEffect(() => {
