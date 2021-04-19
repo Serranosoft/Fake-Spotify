@@ -4,7 +4,6 @@ import SongModel from "../models/SongModel"
 
 function SongList({ authUser, album, playSong, handleFavorite, favoriteSongs, albums, handleAlbums }) {
 
-    console.log(album);
     function objectLength(obj) {
         var result = 0;
         for (var prop in obj) {

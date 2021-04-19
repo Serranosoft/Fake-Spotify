@@ -61,7 +61,6 @@ function App() {
   function checkIfIsFavorite(song) {
     let flag = false;
     favoriteSongs.forEach(element => {
-      console.log(element);
       if (element.id === song.id) {
         flag = true;
       }
@@ -115,7 +114,6 @@ function App() {
 
     switch (id) {
       case "0":
-        console.log(Albums.find(element => element.id === parseInt(id)));
         return Albums.find(element => element.id === parseInt(id));
       case "1":
         let favoriteAlbum = {
@@ -130,6 +128,7 @@ function App() {
   }
 
   return (
+    
     <>
       <Global
         styles={css`
@@ -208,7 +207,9 @@ function App() {
           <Loading />
         }
       </MainContent>
+      
     </>
+    
   );
 }
 

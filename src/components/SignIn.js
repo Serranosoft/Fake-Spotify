@@ -98,8 +98,8 @@ function SignIn({ closeModal, handleAuthUser }) {
                 <Button>Registrar-se con Facebook</Button>
                 <Button>Registrar-se con Google</Button>
                 <Button>Registrar-se con Apple</Button>
-                <InfoText style={{ marginTop: "24px" }} onClick={openSignUpModal}>¿No tienes cuenta?
-                <span style={{ textDecoration: "underline" }}>REGISTRATE</span>
+                <InfoText style={{ marginTop: "24px" }} onClick={openSignUpModal}>¿No tienes cuenta? 
+                <span style={{ textDecoration: "underline" }}> REGISTRATE</span>
                 </InfoText>
             </ModalContainer>
         </>

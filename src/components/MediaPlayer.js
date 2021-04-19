@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef, useEffect, useState } from "react";
 import styled from "@emotion/styled"
 import ReactAudioPlayer from 'react-audio-player';
 import { Albums } from "../resources/Albums"
@@ -7,13 +7,20 @@ import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons'
 
 function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
-
+    
     const songFound = Albums[0].songs.find(element => element.id === songId);
 
     let isFavorite = false;
     favoriteSongs.forEach((el => {
         if(el.id === songFound.id) isFavorite = true
     }))
+
+    /*  test    */
+
+    const player = createRef();
+    useEffect(() => {
+        player.current.audioEl.current.play();
+    }, [songFound])
 
     return (
         <PlayerContainer>
@@ -37,9 +44,9 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
                 <p>{songFound.author}</p>
             </SongData>
             <ReactAudioPlayer
+                ref={player}
                 src={songFound.song}
                 controls
-                autoPlay
                 style={{ width: "40%" }}
             />
             <SongData>
