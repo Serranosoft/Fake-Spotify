@@ -75,7 +75,7 @@ const SongContainer = styled.header`
     justify-content: space-evenly;
     width: 100%;
     background-color: transparent;
-    padding: 8px;
+    padding: 10px;
     margin: 8px 0;
     color: white;
     &:hover {
@@ -103,7 +103,8 @@ const SongAlbum = styled.span`
 
 const AddToAlbumWrapper = styled.div`
     display: inline-block;
-    align-self: flex-end;
+    position: relative;
+    
     padding: 8px 16px;
     cursor: pointer;
     &:hover > div {
@@ -113,7 +114,9 @@ const AddToAlbumWrapper = styled.div`
 
 const AddToAlbumContent = styled.div`
     display: none;
+    min-width: 160px;
     position: absolute;
+    right: -50px;
     margin: 8px 0;
     background-color: #191919;
     box-shadow: 0px 8px 16px 0px black;

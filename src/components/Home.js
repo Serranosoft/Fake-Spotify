@@ -12,7 +12,7 @@ function Home({ authUser, userName, albums }) {
                 <HomeBanner>
                     <Banner src={banner} />
                 </HomeBanner>
-                <h1 style={{ fontSize: "24px" }}>{authUser ? `¡Hola, ${userName}, ¡Aquí aparecerán las listas que has creado!` : `¡Hola, bienvenido a Fake Spotify!`}</h1>
+                <h1 style={{ fontSize: "24px" }}>{authUser ? `¡Hola, ${userName}, ¡Aquí aparecerán las listas que has creado!` : `¡Hola!, Inicia sesión para utilizar todas las funciones!`}</h1>
                 <PlayListWrapper>
                     {albums.map((el => {
                         return <PlayListCard key={el.id} to={`/lista/${el.id}`}>

@@ -19,7 +19,7 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
         <PlayerContainer>
             <SongData>
                 <ActionWrapper>
-                    <h2>{songFound.author}</h2>
+                    <h2>{songFound.title}</h2>
                     {isFavorite ? 
                     <FontAwesomeIcon
                         icon={faHeartSolid}
@@ -34,12 +34,12 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
                     />
                 }
                 </ActionWrapper>
-                <p>{songFound.title}</p>
+                <p>{songFound.author}</p>
             </SongData>
             <ReactAudioPlayer
                 src={songFound.song}
                 controls
-                /* autoPlay */
+                autoPlay
                 style={{ width: "40%" }}
             />
             <SongData>
