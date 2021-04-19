@@ -63,17 +63,20 @@ class Firebase {
     getFavoriteSongs = (id, handleFavorites) => {
         this.getUserRef(id).child("favorite-songs").on("value", snapshot => {
             const snap = snapshot.val();
-            const snapValues = Object.keys(snapshot.val()).map(key => ({
-                ...snap[key]
-            }))
-            handleFavorites(snapValues)
+            if (snap != null) {
+                const snapValues = Object.keys(snapshot.val()).map(key => ({
+                    ...snap[key].song
+                }))
+                handleFavorites(snapValues)
+            } else {
+                handleFavorites([])
+            }
         })
     }
 
     // Set a favorite song to a user
-    setFavoriteSong = (id, songId, handleFavorites) => {
-        console.log(songId);
-        this.getUserRef(id).child("favorite-songs").push({ "songId": songId })
+    setFavoriteSong = (id, song, handleFavorites) => {
+        this.getUserRef(id).child("favorite-songs").push({ "song": song })
             .then(() => {
                 this.getFavoriteSongs(id, handleFavorites)
             }).catch((error) => {
@@ -83,8 +86,7 @@ class Firebase {
 
 
     // Remove favorite song from a user
-    removeFavoriteSong = (id, songId, handleFavorites) => {
-        console.log("Llama al metodo eliminar");
+    removeFavoriteSong = (id, song, handleFavorites) => {
         this.getUserRef(id).child("favorite-songs").once("value", snapshot => {
             const snap = snapshot.val();
             const usersList = Object.keys(snap).map(key => ({
@@ -92,7 +94,7 @@ class Firebase {
                 key: key,
             }));
             usersList.forEach((el => {
-                if (el.songId === songId) {
+                if (el.song.id === song.id) {
                     this.getUserRef(id).child(`favorite-songs/${el.key}`).remove()
                         .then(() => {
                             this.getFavoriteSongs(id, handleFavorites)
@@ -105,8 +107,70 @@ class Firebase {
         })
     }
 
+    // Add album
+    addAlbum = (id, albumName) => {
+        this.getUserRef(id).child("albums").push({
+            "albumName": albumName
+        }).then((response) => {
 
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
 
+    // Get all albums from a user
+    getAlbums = (id, handleAlbums) => {
+        this.getUserRef(id).child("albums").on("value", snapshot => {
+            const snap = snapshot.val();
+            const snapValues = Object.keys(snapshot.val()).map(key => ({
+                ...snap[key],
+                id: key
+            }))
+            handleAlbums(snapValues)
+        })
+    }
+
+    // Add a specific song to a specific album from a user
+    addSongToAlbum = (id, albumId, song, handleAlbums) => {
+        // Check if exist
+        this.getUserRef(id).child("albums").child(albumId).once("value", snapshot => {
+            const snap = snapshot.val();
+            let exist = true;
+            if (snap.songs) {
+                let snapValues = Object.keys(snap.songs).map(key => ({
+                    ...snap.songs[key]
+                }))
+                snapValues.some((el => {
+                    if (el.id !== song.id) {
+                        exist = false;
+                    } else {
+                        exist = true;
+                    }
+                    return exist === true;
+                }))
+                if (!exist) {
+                    // Add song to album
+                    this.getUserRef(id).child("albums").child(albumId).child("songs").push(song)
+                        .then((response) => {
+                            this.getAlbums(id, handleAlbums)
+                            exist = true;
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
+            } else {
+                this.getUserRef(id).child("albums").child(albumId).child("songs").push(song)
+                    .then((response) => {
+                        this.getAlbums(id, handleAlbums)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+        })
+
+    }
 }
 
 export default Firebase;

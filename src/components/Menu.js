@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import styled from "@emotion/styled"
 import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faSearch, faBook } from '@fortawesome/free-solid-svg-icons'
+import { FirebaseContext } from "./Firebase";
 
-function Menu() {
+function Menu({ authUser, albums }) {
+
+    const [albumName, handleAlbumName] = useState("");
+
+
+    const handleChange = (e) => {
+        handleAlbumName(e.target.value)
+    }
+
+    const { addAlbum } = useContext(FirebaseContext)
+
     return (
         <MenuContainer>
             <Nav>
-
                 <LinkWrapper to="/">
                     <FontAwesomeIcon icon={faHome} size="1x" />
                     <MenuItem>Inicio</MenuItem>
@@ -24,18 +34,36 @@ function Menu() {
                     <MenuItem>Tu biblioteca</MenuItem>
                 </LinkWrapper>
                 <Separator />
-                <MenuItem>Crear playlist</MenuItem>
-                <MenuItem>Canciones que te gustan</MenuItem>
+                <LinkWrapper to={`/lista/${0}`}>
+                    <MenuItem>Descubrimiento semanal</MenuItem>
+                </LinkWrapper>
+                <LinkWrapper to={`/lista/${1}`}>
+                    <MenuItem>Canciones que te gustan</MenuItem>
+                </LinkWrapper>
                 <Separator style={{ borderBottom: "0.5px solid gray" }} />
 
+                <AddAlbumWrapper>
+                    <AlbumInput
+                        type="text"
+                        value={albumName}
+                        onChange={handleChange}
+                        placeholder="Crea tu propio albúm" />
+                    <AddAlbum onClick={() => addAlbum(authUser.uid, albumName)}>+</AddAlbum>
+                </AddAlbumWrapper>
 
-                <Link to={`/lista/${0}`}>
-                    <MenuItem>Descubrimiento semanal</MenuItem>
-                </Link>
+                {authUser ?
+                    albums.map((el => {
+                        return <LinkWrapper key={el.id} to={`/lista/${el.id}`}>
+                            <MenuItem>
+                                {el.albumName}
+                            </MenuItem>
+                        </LinkWrapper>
 
+                    }))
+                    :
+                    ""
 
-
-                <MenuItem>Favoritas de la radio</MenuItem>
+                }
             </Nav>
 
         </MenuContainer>
@@ -51,6 +79,7 @@ const MenuContainer = styled.div`
     height: 85%;
     background: black;
     overflow-y: scroll;
+    overflow-x: hidden;
 `
 
 const Nav = styled.nav`
@@ -59,8 +88,10 @@ const Nav = styled.nav`
     align-items: flex-start;
     justify-content: center;
     padding: 24px 16px;    
+    
     & > a {
         text-decoration: none;
+        
     }
 `
 
@@ -74,13 +105,14 @@ const LinkWrapper = styled(Link)`
     }
     padding: 8px 0;
     border-radius: 5px;
+
 `
 
 const MenuItem = styled.p`
     font-size: 17px;
     color: lightgray;
-    margin: 7px 0;
     cursor: pointer;
+    word-break: break-all;
     &:hover {
         color: white;
     }
@@ -89,4 +121,29 @@ const MenuItem = styled.p`
 const Separator = styled.div`
     width: 100%;
     margin: 16px 0;
+`
+
+const AddAlbumWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    font-size: 18px;
+`
+
+const AlbumInput = styled.input`
+    width: 100%;
+    display: block;
+    padding: 5px 8px;
+    margin: 8px 0;
+    background-color: #212121;
+    color: white;
+    border: 0;
+`
+
+const AddAlbum = styled.button`
+    padding: 5px 8px;
+    background-color: transparent;
+    color: white;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
 `

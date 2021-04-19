@@ -6,7 +6,6 @@ import SignUp from "./SignUp";
 import RecoverPassword from "./RecoverPassword";
 
 function SignIn({ closeModal, handleAuthUser }) {
-
     const initialState = {
         mailInput: "",
         passwdInput: ""

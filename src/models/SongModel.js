@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "@emotion/styled"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlayCircle } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisH, faPlayCircle } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
-import { faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons'
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
+import { Albums } from "../resources/Albums"
+import { FirebaseContext } from '../components/Firebase';
 
-function SongModel(el) {
+function SongModel({ authUser, playSong, handleFavorite, song, favoriteSongs, albums, handleAlbums }) {
+
+    const { addSongToAlbum } = useContext(FirebaseContext)
+    let isFavorite = false;
+    if (song.id != "-1") {
+        const songFound = Albums[0].songs.find(element => element.id === song.id);
+        favoriteSongs.forEach((el => {
+            if (el.id === songFound.id) isFavorite = true
+        }))
+    }
 
     return (
         <SongContainer>
@@ -13,17 +24,43 @@ function SongModel(el) {
                 icon={faPlayCircle}
                 size="2x"
                 style={{ cursor: "pointer" }}
-                onClick={() => { el.playSong(el.id) }} />
-            <FontAwesomeIcon
-                icon={faHeartRegular}
-                size="1x"
-            />
+                onClick={() => { playSong(song.id) }} />
+            {isFavorite ?
+                <FontAwesomeIcon
+                    icon={faHeartSolid}
+                    size="1x"
+                    onClick={() => handleFavorite(song)}
+                />
+                :
+                <FontAwesomeIcon
+                    icon={faHeartRegular}
+                    size="1x"
+                    onClick={() => handleFavorite(song)}
+                />
+            }
             <SongData>
-                <h2>{el.title}</h2>
-                <span>{el.author}</span>
+                <h2>{song.title}</h2>
+                <span>{song.author}</span>
             </SongData>
-            <SongAlbum>{el.album}</SongAlbum>
-            <span>{el.duration}</span>
+            <SongAlbum>{song.album}</SongAlbum>
+            <span>{song.duration}</span>
+            <AddToAlbumWrapper>
+                <FontAwesomeIcon
+                    icon={faEllipsisH}
+                    size="1x"
+                />
+
+                <AddToAlbumContent>
+                    {albums.map((el => {
+                        return <AddToAlbumOption
+                            key={el.id}
+                            onClick={() => addSongToAlbum(authUser.uid, el.id, song, handleAlbums)}>
+                            Añadir a {el.albumName}
+                        </AddToAlbumOption>
+                    }))}
+                </AddToAlbumContent>
+            </AddToAlbumWrapper>
+
         </SongContainer>
 
     )
@@ -50,7 +87,7 @@ const SongData = styled.div`
     display: flex;
     flex-direction: column;
     color: white;
-    width: 50%;
+    width: 30%;
     & > h2 {
         font-size: 15px;
     }
@@ -62,4 +99,31 @@ const SongData = styled.div`
 const SongAlbum = styled.span`
     width: 30%;
     color: white;
+`
+
+const AddToAlbumWrapper = styled.div`
+    display: inline-block;
+    align-self: flex-end;
+    padding: 8px 16px;
+    cursor: pointer;
+    &:hover > div {
+        display: block;
+    }
+`
+
+const AddToAlbumContent = styled.div`
+    display: none;
+    position: absolute;
+    margin: 8px 0;
+    background-color: #191919;
+    box-shadow: 0px 8px 16px 0px black;
+    z-index: 1;
+    & > span:hover, link:hover {
+        background-color: #333333;
+    }
+`
+
+const AddToAlbumOption = styled.span`
+    padding: 16px 16px;
+    display: block;
 `

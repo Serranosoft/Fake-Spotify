@@ -1,27 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import styled from "@emotion/styled"
 import banner from "../images/banner.png"
 import spotifyLogo from "../images/spotifyLogo.png"
 import { Link } from "react-router-dom";
-import { Albums } from "../resources/Albums";
-import DropdownMenu from "./DropdownMenu";
-import { FirebaseContext } from "./Firebase";
 
-function Home({ authUser, openSignInModal, userName }) {
+function Home({ authUser, userName, albums }) {
 
     return (
         <>
             <HomeContainer>
-                <DropdownMenu authUser={authUser} openSignInModal={openSignInModal}/>
                 <HomeBanner>
                     <Banner src={banner} />
                 </HomeBanner>
-                <h1 style={{ fontSize: "24px" }}>{authUser ? `¡Hola, ${userName}!` : `¡Hola, bienvenido a Fake Spotify!`}</h1>
+                <h1 style={{ fontSize: "24px" }}>{authUser ? `¡Hola, ${userName}, ¡Aquí aparecerán las listas que has creado!` : `¡Hola, bienvenido a Fake Spotify!`}</h1>
                 <PlayListWrapper>
-                    {Albums.map((el => {
+                    {albums.map((el => {
                         return <PlayListCard key={el.id} to={`/lista/${el.id}`}>
                             <PlayListImg src={spotifyLogo} />
-                            <PlayListDescr>{el.name}</PlayListDescr>
+                            <PlayListDescr>{el.albumName}</PlayListDescr>
                         </PlayListCard>
                     }))}
                 </PlayListWrapper>
@@ -69,6 +65,7 @@ const PlayListCard = styled(Link)`
     background-color: rgba(255,255,255,0.08);
     cursor: pointer;
     text-decoration: none;
+    word-break: break-all;
     &:hover {
         background-color: rgba(255,255,255,0.2);
     }

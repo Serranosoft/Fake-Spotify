@@ -12,7 +12,7 @@ function SignUp({ closeModal, handleAuthUser, handleSignUpModal }) {
     }
 
     const [inputValues, setInputValues] = useState(initialState)
-    const { register, createUser } = useContext(FirebaseContext);
+    const { register, createUser, addAlbum } = useContext(FirebaseContext);
     const { userNameInput, mailInput, passwdInput } = inputValues;
 
     const handleChange = (e) => {
@@ -27,12 +27,12 @@ function SignUp({ closeModal, handleAuthUser, handleSignUpModal }) {
     const onSubmit = event => {
         let user = {
             userNameInput,
-            mailInput,
-            "favorite-songs": ""
+            mailInput
         }
         register(mailInput, passwdInput)
             .then(authUser => {
                 createUser(authUser.user.uid, user)
+                addAlbum(authUser.user.uid, "Tu primera lista")
                 handleAuthUser(authUser.user)
             })
             .then(() => {

@@ -43,6 +43,8 @@ const DropdownMenuWrapper = styled.div`
     border: 1px solid gray;
     cursor: pointer;
     background-color: #191919;
+    color: white;
+    margin: 8px 24px;
     &:hover > div {
         display: block;
     }

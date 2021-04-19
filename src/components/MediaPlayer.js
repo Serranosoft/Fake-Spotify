@@ -12,7 +12,7 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
 
     let isFavorite = false;
     favoriteSongs.forEach((el => {
-        if(el.songId === songFound.id) isFavorite = true
+        if(el.id === songFound.id) isFavorite = true
     }))
 
     return (
@@ -24,13 +24,13 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
                     <FontAwesomeIcon
                         icon={faHeartSolid}
                         size="1x"
-                        onClick={() => handleFavorite(songId)}
+                        onClick={() => handleFavorite(songFound)}
                     />
                     :
                     <FontAwesomeIcon
                         icon={faHeartRegular}
                         size="1x"
-                        onClick={() => handleFavorite(songId)}
+                        onClick={() => handleFavorite(songFound)}
                     />
                 }
                 </ActionWrapper>

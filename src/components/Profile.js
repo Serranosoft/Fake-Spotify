@@ -1,11 +1,8 @@
-import React, { useContext, useState } from "react"
+import React, { useState } from "react"
 import styled from "@emotion/styled"
-import DropdownMenu from "./DropdownMenu";
-import SignIn from "./SignIn"
 import ResetPassword from "./ResetPassword";
-import { FirebaseContext } from "./Firebase";
 
-function Profile({ authUser, openSignInModal, handleAuthUser, userName }) {
+function Profile({ authUser, openSignInModal, userName }) {
 
     const [resetPasswdActive, handleResetPasswdModal] = useState(false)
     
@@ -28,7 +25,6 @@ function Profile({ authUser, openSignInModal, handleAuthUser, userName }) {
 
             {authUser ?
                 <HomeContainer>
-                    <DropdownMenu openSignInModal={openSignInModal} authUser={authUser} />
                     <ProfileInfoWrapper>
                         <ProfileImg />
                         <ProfileName>{userName}</ProfileName>
@@ -38,14 +34,13 @@ function Profile({ authUser, openSignInModal, handleAuthUser, userName }) {
                     </ProfileOptionsWrapper>
                 </HomeContainer>
                 :
-                <SignIn
-                    closeModal={closeModal}
-                    handleAuthUser={handleAuthUser}
-                />
+                openSignInModal()
+                
             }
         </>
     )
 }
+
 
 
 export default Profile;

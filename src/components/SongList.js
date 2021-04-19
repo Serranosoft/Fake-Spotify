@@ -2,19 +2,42 @@ import React from "react";
 import styled from "@emotion/styled"
 import SongModel from "../models/SongModel"
 
-function SongList({album, playSong, handleFavorite}) {
-    const songsQty = album.songs.length;
+function SongList({ authUser, album, playSong, handleFavorite, favoriteSongs, albums, handleAlbums }) {
+
+    console.log(album);
+    function objectLength(obj) {
+        var result = 0;
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                result++;
+            }
+        }
+        return result;
+    }
 
     return (
         <>
             <SongListHeader>
-                <h1>{album.name}</h1>
-                <span>Este albúm tiene {songsQty} canciones</span>
+                <h1>{album.albumName}</h1>
+                <span>Este albúm tiene {album.songs ? objectLength(album.songs) : "0"} canciones</span>
             </SongListHeader>
             <SongListContainer>
-                {album.songs.map((el => {
-                    return <SongModel key={el.id} playSong={playSong} handleFavorite={handleFavorite} {...el} />
-                }))}
+                {album.songs &&
+                    Object.keys(album.songs).map(key => ({
+                        ...album.songs[key]
+                    })).map((el => {
+                        return <SongModel
+                            key={el.id}
+                            authUser={authUser}
+                            playSong={playSong}
+                            handleFavorite={handleFavorite}
+                            song={el}
+                            favoriteSongs={favoriteSongs}
+                            albums={albums}
+                            handleAlbums={handleAlbums}
+                        />
+                    }))
+                }
 
             </SongListContainer>
         </>
