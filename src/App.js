@@ -122,9 +122,7 @@ function App() {
                   </Route>
                 </ContentWrapper>
               </Switch>
-              {authUser ?
-                <FriendsList playSong={playSong} /> : ""
-              }
+              <FriendsList playSong={playSong} />
               <MediaPlayer
                 songId={songId}
                 handleFavorite={handleFavorite}

@@ -4,7 +4,6 @@ import {Albums} from "../resources/Albums"
 
 function FriendModel({el, playSong}) {
 
-    console.log("a");
     const songFound = Albums[0].songs.find(element => element.id === el.songPlaying);
 
     return (
