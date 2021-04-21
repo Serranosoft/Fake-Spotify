@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
-import { FirebaseContext } from './Firebase';
+import { AuthContext } from './Firebase/AuthDAO';
 import SignUp from "./SignUp";
 import RecoverPassword from "./RecoverPassword";
 
-function SignIn({ closeModal, handleAuthUser }) {
+function SignIn({ closeModal }) {
     const initialState = {
         mailInput: "",
         passwdInput: ""
@@ -23,7 +23,7 @@ function SignIn({ closeModal, handleAuthUser }) {
         handleRecoverPasswdModal(true)
     }
 
-    const { login } = useContext(FirebaseContext);
+    const { login } = useContext(AuthContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -33,7 +33,6 @@ function SignIn({ closeModal, handleAuthUser }) {
     const onSubmit = event => {
         login(inputValues.mailInput, inputValues.passwdInput)
             .then(authUser => {
-                handleAuthUser(authUser.user)
                 setInputValues(initialState)
                 closeModal();
             })
@@ -49,7 +48,6 @@ function SignIn({ closeModal, handleAuthUser }) {
                 <SignUp
                     handleSignUpModal={handleSignUpModal}
                     closeModal={closeModal}
-                    handleAuthUser={handleAuthUser}
                 />
             }
 

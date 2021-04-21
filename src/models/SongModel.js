@@ -5,11 +5,13 @@ import { faEllipsisH, faPlayCircle } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
 import { Albums } from "../resources/Albums"
-import { FirebaseContext } from '../components/Firebase';
+import {AuthContext} from '../components/Firebase/AuthDAO';
+import { DBContext } from "../components/Firebase/UserDAO";
 
-function SongModel({ authUser, playSong, handleFavorite, song, favoriteSongs, albums, handleAlbums }) {
+function SongModel({ playSong, song }) {
+    const { authUser } = useContext(AuthContext)
+    const { albums, addSongToAlbum, favoriteSongs, handleFavorite } = useContext(DBContext)
 
-    const { addSongToAlbum } = useContext(FirebaseContext)
     let isFavorite = false;
     if (song.id != "-1") {
         const songFound = Albums[0].songs.find(element => element.id === song.id);
@@ -54,7 +56,7 @@ function SongModel({ authUser, playSong, handleFavorite, song, favoriteSongs, al
                     {albums.map((el => {
                         return <AddToAlbumOption
                             key={el.id}
-                            onClick={() => addSongToAlbum(authUser.uid, el.id, song, handleAlbums)}>
+                            onClick={() => addSongToAlbum(authUser.uid, el.id, song)}>
                             Añadir a {el.albumName}
                         </AddToAlbumOption>
                     }))}

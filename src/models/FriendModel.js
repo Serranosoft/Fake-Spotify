@@ -2,11 +2,14 @@ import React from "react";
 import styled from "@emotion/styled"
 import {Albums} from "../resources/Albums"
 
-function FriendModel(el) {
+function FriendModel({el, playSong}) {
+
+    console.log("a");
     const songFound = Albums[0].songs.find(element => element.id === el.songPlaying);
+
     return (
         <FriendContainer>
-            <SongPlay onClick={() => {el.playSong(el.songPlaying)}}>PLAY</SongPlay>
+            <SongPlay onClick={() => {playSong(el.songPlaying)}}>PLAY</SongPlay>
             <SongData>
                 <h2>{el.name}</h2>
                 <p>{songFound.title}</p>

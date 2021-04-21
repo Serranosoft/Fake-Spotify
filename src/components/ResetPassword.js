@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
-import { FirebaseContext } from './Firebase';
+import {AuthContext} from './Firebase/AuthDAO';
 import { useHistory } from 'react-router-dom';
 
 function ResetPassword({show, closeModal}) {
@@ -13,7 +13,7 @@ function ResetPassword({show, closeModal}) {
     const showHideClassName = show ? "block" : "none";
 
     const [inputValues, setInputValues] = useState(initialState)
-    const { updatePassword, SignOut } = useContext(FirebaseContext);
+    const { updatePassword, SignOut } = useContext(AuthContext);
     const history = useHistory();
 
     const handleChange = (e) => {

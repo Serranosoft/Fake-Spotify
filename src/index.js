@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import Firebase, { FirebaseContext } from './components/Firebase';
-
+import {AuthDAO} from './components/Firebase/AuthDAO';
+import { UserDAO } from './components/Firebase/UserDAO';
 
 ReactDOM.render(
-  <FirebaseContext.Provider value={new Firebase()}>
+  <AuthDAO>
+    <UserDAO>
       <App />
-  </FirebaseContext.Provider>,
+    </UserDAO>
+  </AuthDAO>,
   document.getElementById('root')
 );

@@ -1,11 +1,15 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import styled from "@emotion/styled"
 import ResetPassword from "./ResetPassword";
+import { AuthContext } from "./Firebase/AuthDAO";
+import { DBContext } from "./Firebase/UserDAO";
 
-function Profile({ authUser, openSignInModal, userName }) {
-
+function Profile({ openSignInModal }) {
     const [resetPasswdActive, handleResetPasswdModal] = useState(false)
     
+    const {authUser} = useContext(AuthContext)
+    const {userName} = useContext(DBContext)
+
     function openResetPasswdModal() {
         handleResetPasswdModal(true)
     }
@@ -22,7 +26,6 @@ function Profile({ authUser, openSignInModal, userName }) {
                     closeModal={closeModal}
                 />
             }
-
             {authUser ?
                 <HomeContainer>
                     <ProfileInfoWrapper>
@@ -35,7 +38,6 @@ function Profile({ authUser, openSignInModal, userName }) {
                 </HomeContainer>
                 :
                 openSignInModal()
-                
             }
         </>
     )

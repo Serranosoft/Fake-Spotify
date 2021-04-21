@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+/* import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
 import { FirebaseContext } from './Firebase';
@@ -112,4 +112,4 @@ const Button = styled.button`
     color: white;
     border-radius: 50px;
     font-size: 15px;
-`
+` */

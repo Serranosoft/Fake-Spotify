@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled"
 import SongModel from "../models/SongModel"
 
-function SongList({ authUser, album, playSong, handleFavorite, favoriteSongs, albums, handleAlbums }) {
+function SongList({ album, playSong }) {
 
     function objectLength(obj) {
         var result = 0;
@@ -27,24 +27,17 @@ function SongList({ authUser, album, playSong, handleFavorite, favoriteSongs, al
                     })).map((el => {
                         return <SongModel
                             key={el.id}
-                            authUser={authUser}
                             playSong={playSong}
-                            handleFavorite={handleFavorite}
                             song={el}
-                            favoriteSongs={favoriteSongs}
-                            albums={albums}
-                            handleAlbums={handleAlbums}
                         />
                     }))
                 }
-
             </SongListContainer>
         </>
     )
 }
 
 export default SongList;
-
 
 const SongListHeader = styled.div`
     width: 100%;

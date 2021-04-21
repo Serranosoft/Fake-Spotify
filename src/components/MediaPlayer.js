@@ -1,13 +1,17 @@
-import React, { createRef, useEffect } from "react";
+import React, { createRef, useEffect, useContext } from "react";
 import styled from "@emotion/styled"
 import ReactAudioPlayer from 'react-audio-player';
 import { Albums } from "../resources/Albums"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons'
+import { DBContext } from "./Firebase/UserDAO";
 
-function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
+function MediaPlayer({songId, handleFavorite}) {
     
+    
+
+    const {favoriteSongs} = useContext(DBContext)
     const songFound = Albums[0].songs.find(element => element.id === songId);
 
     let isFavorite = false;
@@ -17,7 +21,7 @@ function MediaPlayer({songId, handleFavorite, favoriteSongs}) {
 
     const player = createRef();
     useEffect(() => {
-        player.current.audioEl.current.play();
+        //player.current.audioEl.current.play();
     }, [songFound])
 
     return (

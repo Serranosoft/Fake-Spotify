@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "@emotion/styled"
 import banner from "../images/banner.png"
 import spotifyLogo from "../images/spotifyLogo.png"
 import { Link } from "react-router-dom";
+import { AuthContext } from "./Firebase/AuthDAO";
+import { DBContext } from "./Firebase/UserDAO";
 
-function Home({ authUser, userName, albums }) {
+function Home() {
+
+    const {authUser} = useContext(AuthContext)
+    const {userName, albums} = useContext(DBContext)
 
     return (
         <>

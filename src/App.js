@@ -4,15 +4,16 @@ import styled from "@emotion/styled"
 import Menu from "./components/Menu";
 import FriendsList from "./components/FriendsList";
 import MediaPlayer from "./components/MediaPlayer";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Route, BrowserRouter, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import SongList from "./components/SongList";
-import { Albums } from "./resources/Albums";
-import { FirebaseContext } from './components/Firebase';
+import { AuthContext } from './components/Firebase/AuthDAO';
 import SignIn from "./components/SignIn";
 import Profile from "./components/Profile";
 import Loading from "./components/Loading";
 import DropdownMenu from "./components/DropdownMenu";
+import { DBContext } from "./components/Firebase/UserDAO";
+import { checkIfIsFavorite, findAlbum } from "./components/Utils/Utils"
 
 function App() {
 
@@ -22,23 +23,12 @@ function App() {
   // Estado del modal de Inicio de Sesión
   const [signInActive, handleSignInModal] = useState(false)
 
-  // Usuario autenticado actual
-  const [authUserRef, handleAuthUser] = useState("")
-
-  // Obtener el username del usuario
-  const [userName, setUserName] = useState("");
-
-  // Canciones favoritas del usuario
-  const [favoriteSongs, handleFavorites] = useState([])
-
-  // Albumes creados por el usuario
-  const [albums, handleAlbums] = useState([])
-
   // Revisar si toda la información ha sido recogida
   const [dataFetched, checkData] = useState(false)
 
   // Context de Firebase con los métodos DAO
-  const { setFavoriteSong, getFavoriteSongs, getAuthUser, removeFavoriteSong, getUserName, getAlbums } = useContext(FirebaseContext)
+  const { authUser } = useContext(AuthContext)
+  const { setFavoriteSong, favoriteSongs, removeFavoriteSong, albums, userName } = useContext(DBContext)
 
   function playSong(id) {
     changeSong(id)
@@ -52,52 +42,22 @@ function App() {
     handleSignInModal(false)
   }
 
-  // Verifica si una canción ya esta en favoritos o no
-  function checkIfIsFavorite(song) {
-    let flag = false;
-    favoriteSongs.forEach(element => {
-      if (element.id === song.id) {
-        flag = true;
-      }
-    });
-    return flag;
-  }
-
   // Coloca o elimina una canción de favoritos
   function handleFavorite(song) {
-    if (authUserRef) {
+    if (authUser) {
       if (!checkIfIsFavorite(song)) {
-        setFavoriteSong(authUserRef.uid, song, handleFavorites)
+        setFavoriteSong(authUser.uid, song)
       } else {
-        removeFavoriteSong(authUserRef.uid, song, handleFavorites)
+        removeFavoriteSong(authUser.uid, song)
       }
     } else {
       openSignInModal()
     }
   }
 
-  // Obtiene el usuario autenticado cuando el componente termina de montarse
-  useEffect(() => {
-    getAuthUser(handleAuthUser)
-  }, [])
-
-  // Cuando obtiene el usuario autenticado también obtiene sus canciones favoritas, usuario y albums
-  useEffect(() => {
-    if (authUserRef != "" && authUserRef != null) {
-      getFavoriteSongs(authUserRef.uid, handleFavorites)
-      getAlbums(authUserRef.uid, handleAlbums)
-      getUserName(authUserRef.uid, setUserName);
-    } else {
-      // Limpiamos todos los state si el usuario no esta autenticado
-      handleAlbums([])
-      handleFavorites([])
-      setUserName("")
-    }
-  }, [authUserRef])
-
   // Verifica si todos los datos se han obtenido o no
   useEffect(() => {
-    if (authUserRef) {
+    if (authUser) {
       if (albums && userName && favoriteSongs) {
         checkData(true)
       } else {
@@ -107,28 +67,9 @@ function App() {
       checkData(true)
     }
 
-  }, [albums, authUserRef, userName, favoriteSongs])
-
-  // Get album from ID
-  const findAlbum = (id) => {
-
-    switch (id) {
-      case "0":
-        return Albums.find(element => element.id === parseInt(id));
-      case "1":
-        let favoriteAlbum = {
-          albumName: "Canciones que me gustan",
-          id: 1,
-          songs: favoriteSongs
-        }
-        return favoriteAlbum
-    }
-
-    return albums.find(element => element.id === id);
-  }
+  }, [albums, authUser, userName, favoriteSongs])
 
   return (
-    
     <>
       <Global
         styles={css`
@@ -153,64 +94,51 @@ function App() {
       {signInActive &&
         <SignIn
           closeModal={closeModal}
-          handleAuthUser={handleAuthUser}
         />
       }
 
       <MainContent signInActive={signInActive}>
         {dataFetched ?
-          <BrowserRouter>
-            <Menu
-              authUser={authUserRef}
-              albums={albums}
-              openSignInModal={openSignInModal}
-            />
-            <Switch>
-              <ContentWrapper>
-                <DropdownMenu authUser={authUserRef} openSignInModal={openSignInModal} handleAuthUser={handleAuthUser} />
-                <Route exact path="/" component={Home}>
-                  <Home
-                    authUser={authUserRef}
-                    userName={userName}
-                    albums={albums}
-                  />
-                </Route>
-                <Route exact path="/profile" component={Profile}>
-                  <Profile
-                    authUser={authUserRef}
-                    userName={userName}
-                    openSignInModal={openSignInModal}
-                    handleAuthUser={handleAuthUser}
-                  />
-                </Route>
-                <Route exact path="/lista/:id" render={(routeProps) => (
-                  <SongList
-                    authUser={authUserRef}
-                    album={{ ...findAlbum(routeProps.match.params.id) }}
-                    playSong={playSong}
-                    handleFavorite={handleFavorite}
-                    favoriteSongs={favoriteSongs}
-                    albums={albums}
-                    handleAlbums={handleAlbums}
-                  />
-                )}>
-                </Route>
-              </ContentWrapper>
-            </Switch>
-            <FriendsList playSong={playSong} />
-            <MediaPlayer
-              songId={songId}
-              handleFavorite={handleFavorite}
-              favoriteSongs={favoriteSongs}
-            />
-          </BrowserRouter>
+          <>
+            <BrowserRouter>
+              <Menu
+                openSignInModal={openSignInModal}
+              />
+              <Switch>
+                <ContentWrapper>
+                  <DropdownMenu openSignInModal={openSignInModal} />
+                  <Route exact path="/" component={Home} />
+                  <Route exact path="/profile">
+                    <Profile
+                      openSignInModal={openSignInModal}
+                    />
+                  </Route>
+                  <Route exact path="/lista/:id" render={(routeProps) => (
+                    <SongList
+                      album={{ ...findAlbum(routeProps.match.params.id, favoriteSongs, albums) }}
+                      playSong={playSong}
+                    />
+                  )}>
+                  </Route>
+                </ContentWrapper>
+              </Switch>
+              {authUser ?
+                <FriendsList playSong={playSong} /> : ""
+              }
+              <MediaPlayer
+                songId={songId}
+                handleFavorite={handleFavorite}
+              />
+
+            </BrowserRouter>
+          </>
           :
           <Loading />
         }
       </MainContent>
-      
+
     </>
-    
+
   );
 }
 

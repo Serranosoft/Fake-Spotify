@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import banner from "../images/banner.png"
-import { FirebaseContext } from './Firebase';
+import { AuthContext } from "./Firebase/AuthDAO";
+import { DBContext } from "./Firebase/UserDAO";
 
-function SignUp({ closeModal, handleAuthUser, handleSignUpModal }) {
+function SignUp({ closeModal, handleSignUpModal }) {
 
     const initialState = {
         userNameInput: "",
@@ -12,7 +13,9 @@ function SignUp({ closeModal, handleAuthUser, handleSignUpModal }) {
     }
 
     const [inputValues, setInputValues] = useState(initialState)
-    const { register, createUser, addAlbum } = useContext(FirebaseContext);
+    const { register } = useContext(AuthContext);
+    const {createUser, addAlbum} = useContext(DBContext)
+
     const { userNameInput, mailInput, passwdInput } = inputValues;
 
     const handleChange = (e) => {
@@ -33,7 +36,6 @@ function SignUp({ closeModal, handleAuthUser, handleSignUpModal }) {
             .then(authUser => {
                 createUser(authUser.user.uid, user)
                 addAlbum(authUser.user.uid, "Tu primera lista")
-                handleAuthUser(authUser.user)
             })
             .then(() => {
                 setInputValues(initialState)

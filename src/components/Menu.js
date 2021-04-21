@@ -3,18 +3,27 @@ import styled from "@emotion/styled"
 import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faSearch, faBook } from '@fortawesome/free-solid-svg-icons'
-import { FirebaseContext } from "./Firebase";
+import { AuthContext } from "./Firebase/AuthDAO";
+import { DBContext } from "./Firebase/UserDAO";
 
-function Menu({ authUser, albums, openSignInModal }) {
+function Menu({ openSignInModal }) {
 
     const [albumName, handleAlbumName] = useState("");
-
+    const { authUser } = useContext(AuthContext)
+    const { albums, addAlbum } = useContext(DBContext)
 
     const handleChange = (e) => {
         handleAlbumName(e.target.value)
     }
 
-    const { addAlbum } = useContext(FirebaseContext)
+    const handleAlbum = () => {
+        if (authUser) {
+            addAlbum(authUser.uid, albumName)
+            handleAlbumName("")
+        } else {
+            openSignInModal()
+        }
+    }
 
     return (
         <MenuContainer>
@@ -48,7 +57,7 @@ function Menu({ authUser, albums, openSignInModal }) {
                         value={albumName}
                         onChange={handleChange}
                         placeholder="Crea tu propio albúm" />
-                    <AddAlbum onClick={() => {authUser != null ? addAlbum(authUser.uid, albumName) : openSignInModal()}}>+</AddAlbum>
+                    <AddAlbum onClick={handleAlbum}>+</AddAlbum>
                 </AddAlbumWrapper>
 
                 {authUser ?
@@ -58,21 +67,14 @@ function Menu({ authUser, albums, openSignInModal }) {
                                 {el.albumName}
                             </MenuItem>
                         </LinkWrapper>
-
-                    }))
-                    :
-                    ""
-
+                    })) : ""
                 }
             </Nav>
-
         </MenuContainer>
-
     )
 }
 
 export default Menu;
-
 
 const MenuContainer = styled.div`
     width: 18%;
